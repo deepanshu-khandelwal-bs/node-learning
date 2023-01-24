@@ -9,7 +9,7 @@ fs.readFile("./data.json", "utf8", (err, jsonString) => {
   }
   try {
     const data = JSON.parse(jsonString);
-    console.log("Async data",data[0].firstname)
+    console.log("Async data",data.firstname)
   } catch (err) {
     console.log("Error parsing JSON string:", err);
   }
