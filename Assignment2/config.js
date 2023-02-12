@@ -25,6 +25,7 @@ function readFileData(err, json) {
   } catch (err) {
     return err;
   }
+  startApp();
 };
 
 //-------write
@@ -40,42 +41,66 @@ function writeFileData(id,name,age, email) {
     fs.writeFile("./data1.json", JSON.stringify(users), err => {
       if (err) throw err; 
     console.log("User created.");
+    startApp();
     });
+    
 };
 
 //-----------Update
 function updateFileData(id,name){
   fs.readFile("./data1.json", "utf-8", (err, data) => {
-    if (err) throw err;
+    if (err) console.log("Error:-", err);
     let arr = JSON.parse(data);
+    let ids = [];
     arr.forEach((element) => {
-      if (element.id === id) {
-        element.name = name;
-      }
+      ids.push(element.id);
     });
-    fs.writeFile("./data1.json", JSON.stringify(arr), (err) => {
-      if (err) throw err;
-      console.log('Data updated')
-    });
+    if(ids.includes(id)) {
+      arr.forEach((element) => {
+        if (element.id === id) {
+          element.name = name;
+        }
+      });
+      fs.writeFile("./data1.json", JSON.stringify(arr), (err) => {
+        if (err) throw err;
+        console.log('Data updated');
+        startApp();
+      });
+    } else {
+      console.log("User id not exist");
+      startApp();
+    }
+    
   });
 }
 
 //------------Delete
 function deleteFileData(id){
   fs.readFile("./data1.json", "utf-8", (err, data) => {
-    if (err) console.log("Something went wrong", err);
+    if (err) console.log("Error:-", err);
     let arr = JSON.parse(data);
-    for (let i = 0; i < arr.length; i++) {
-      if (arr[i].id === id) {
-        index = i;
-        break;
-      }
-    }
-    arr.splice(index, 1);
-    fs.writeFile("./data1.json", JSON.stringify(arr), (err) => {
-      if (err) throw err;
-      console.log('Data Deleted')
+    let ids = [];
+    arr.forEach((element) => {
+      ids.push(element.id);
     });
+    if(ids.includes(id)) {
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].id === id) {
+          index = i;
+          break;
+        }
+      }
+      arr.splice(index, 1);
+      fs.writeFile("./data1.json", JSON.stringify(arr), (err) => {
+        if (err) throw err;
+        console.log('Data Deleted');
+        startApp();
+      });
+    } else {
+      console.log("User id not exist");
+      startApp();
+    }
+    
   });
 }
 
@@ -97,7 +122,7 @@ const startApp = async() => {
     const id = await readLineAsync('Enter ID you want to delete : ');
     deleteFileData(id);
   }else{
-    console.log('Something went wrong.')
+    console.log('User not found.')
   }
 }
 
